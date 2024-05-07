@@ -14,9 +14,9 @@
     <td>{{ produto.id }}</td>
     <td>{{ produto.produto }}</td>
     <td>{{ produto.peso }}</td>
-    <td>{{ produto.palletTotal }} / {{store.getQuantidadeProdutoCarregada(produto.id)()}}</td>
+    <td>{{ produto.palletTotal }} / {{produto.palletsCarregados}} </td>
     <td>
-      <button [disabled]="!store.caminhaoSelecionado()" (click)="addProdutoAoCaminhaoSelecionado(produto.id)">
+      <button [disabled]="!store.caminhaoSelecionado() || produto.palletsCarregados >= produto.palletTotal || store.carroSelecionadoCheio()" (click)="addProdutoAoCaminhaoSelecionado(produto.id)">
         Adicionar produto ao caminhão selecionado
       </button>
     </td>
@@ -34,7 +34,7 @@
       <div>Veiculo:{{ veiculo.equipamento }}</div>
       <div>Equipamento: {{ veiculo.equipamento }}</div>
       <div>Peso: {{ veiculo.capacidadePeso }}</div>
-      <div>Quantidade Pallets Veiculo: {{ calcularProdutosNoCaminhao(veiculo.id)() }} / {{veiculo.quantidadePallets}}</div>
+      <div>Quantidade Pallets Veiculo: {{ calcularProdutosNoCaminhao(veiculo) }} / {{veiculo.quantidadePallets}}</div>
       <button (click)="selecionarCaminhao(veiculo.id)">
         Selecionar caminhao
       </button>
@@ -46,13 +46,24 @@
           <th style="width: 50%;">Produto</th>
           <th style="width: 25%;">Qtd (Pallets)</th>
           <th style="width: 25%;">Peso (Kg)</th>
+          <th style="width: 25%;">Acoes</th>
         </tr>
   
-        @for(produto of store.getProdutosByCarroId(veiculo.id)(); track produto.id) {
+        @for(produto of veiculo.produtos; track produto.produtoId) {
         <tr>
           <td>{{ produto.produto }}</td>
-          <td>{{ produto.palletTotal }}</td>
+          <td>
+            <button (click)="store.subtrairQuantidadePalles(produto.produtoId)">-</button>
+                {{ produto.quantidadePallets }} / {{ produto.palletsCarregados }}
+            <button (click)="store.adicionarQuantidadePalles(produto.produtoId)">+</button>
+          </td>
+  
           <td>{{ produto.peso }}</td>
+          <td>
+      
+        
+            <button [disabled]="store.caminhaoSelecionado() !== veiculo.id" (click)="store.excluirProdutoDoVeiculo(produto.produtoId)">Excluir</button>
+          </td>
         </tr>
       }
       </table>

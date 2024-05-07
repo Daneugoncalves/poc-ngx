@@ -1,7 +1,8 @@
-import { Component, OnInit, computed, inject } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { MontagemVeiculosStore } from './store/montagem-veiculo.store';
 import { CommonModule, JsonPipe } from '@angular/common';
+import { Veiculo } from './model/produto.model';
 
 @Component({
   selector: 'app-root',
@@ -18,12 +19,14 @@ export class AppComponent implements OnInit {
     this.store.loadAllVeiculos().then(() => {console.log('Veiculos loaded')});
   }
 
-  calcularProdutosNoCaminhao(veiculoId: string) {
-    return computed(() => this.store.getProdutosByCarroId(veiculoId)().reduce((acc, produto) => acc + produto.palletTotal, 0));
+  calcularProdutosNoCaminhao(veiculo: Veiculo) {
+    return veiculo.produtos.reduce((acc, produto) => {
+      return acc + produto.palletsCarregados;
+    }, 0);
   }
 
   addProdutoAoCaminhaoSelecionado(produtoId: string) {
-    this.store.addProdutoNoVeiculo(produtoId, this.store.caminhaoSelecionado());
+    this.store.addProdutoNoVeiculo(produtoId);
   }
 
   selecionarCaminhao(caminhaoId: string) {

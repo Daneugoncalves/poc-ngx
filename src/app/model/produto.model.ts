@@ -4,8 +4,8 @@ export type Produto = {
     peso: number,
     palletTotal: number,
     complemento: boolean,
-    veiculo: VeiculoProduto[],
     fatorHectoLitro: number,
+    palletsCarregados: number,
 }
 
 export type Veiculo = {
@@ -13,10 +13,16 @@ export type Veiculo = {
     veiculoProprio: boolean,
     equipamento: string,
     quantidadePallets: number,
-    capacidadePeso: number
+    capacidadePeso: number,
+    palletsCarregados: number,
+    produtos: VeiculoProduto[],
 }
 
 export type VeiculoProduto = {
-    veiculoId: string,
+    produtoId: string,
+    produto: string,
+    fatorHectoLitro: number,
+    peso: number,
     quantidadePallets: number,
+    palletsCarregados: number,
 }
